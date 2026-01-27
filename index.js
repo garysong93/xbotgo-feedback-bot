@@ -11,12 +11,20 @@ const client = new Client({
 const userSelections = new Map();
 
 // Google Sheets 配置
-const GOOGLE_CREDENTIALS_PATH = './google-credentials.json';
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 
 // 初始化 Google Sheets API
 async function getGoogleSheetsClient() {
-  const credentials = JSON.parse(fs.readFileSync(GOOGLE_CREDENTIALS_PATH, 'utf8'));
+  // 优先从环境变量读取凭证，如果没有则从文件读取（本地开发）
+  let credentials;
+  if (process.env.GOOGLE_CREDENTIALS) {
+    credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+  } else if (fs.existsSync('./google-credentials.json')) {
+    credentials = JSON.parse(fs.readFileSync('./google-credentials.json', 'utf8'));
+  } else {
+    throw new Error('Google credentials not found. Please set GOOGLE_CREDENTIALS environment variable or provide google-credentials.json file.');
+  }
+
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
