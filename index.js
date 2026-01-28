@@ -227,7 +227,7 @@ client.on('interactionCreate', async interaction => {
       .setStyle(TextInputStyle.Paragraph)
       .setRequired(true)
       .setMinLength(10)
-      .setMaxLength(1000);
+      .setMaxLength(3000);
 
     const row = new ActionRowBuilder().addComponents(detailInput);
     modal.addComponents(row);
